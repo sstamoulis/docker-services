@@ -1,0 +1,22 @@
+[Unit]
+Description=Sonarr docker container
+Requires=docker.service deluge-docker.service cardigann-docker.service
+After=docker.service deluge-docker.service cardigann-docker.service
+
+[Service]
+EnvironmentFile=/etc/systemd/download_settings.env
+ExecStartPre=-/usr/bin/docker create \
+ --name=sonarr \
+ -e PUID=$PUID -e PGID=$PGID \
+ -e TZ=$TZ \
+ -p 8989:8989 \
+ -v /dev/rtc:/dev/rtc:ro \
+ -v "${DOWNLOADS_PATH}/tv":/tv \
+ -v "${CONFIG_PATH}/sonarr":/config \
+ -v "${DOWNLOADS_PATH}":/downloads \
+ linuxserver/sonarr
+ExecStart=/usr/bin/docker start -a sonarr
+ExecStop=/usr/bin/docker stop sonarr
+
+[Install]
+WantedBy=multi-user.target

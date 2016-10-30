@@ -1,0 +1,19 @@
+[Unit]
+Description=Cardigann docker container
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/systemd/download_settings.env
+ExecStartPre=-/usr/bin/docker create \
+ --name=cardigann \
+ -e PUID=$PUID -e PGID=$PGID \
+ -e TZ=$TZ \
+ -p 5060:5060 \
+ -v "${CONFIG_PATH}/cardigann":/config \
+ sstamoulis/cardigann
+ExecStart=/usr/bin/docker start -a cardigann
+ExecStop=/usr/bin/docker stop cardigann
+
+[Install]
+WantedBy=multi-user.target

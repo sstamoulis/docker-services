@@ -1,0 +1,20 @@
+[Unit]
+Description=Deluge docker container
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/systemd/download_settings.env
+ExecStartPre=-/usr/bin/docker create \
+ --name=deluge \
+ --net=host \
+ -e PUID=$PUID -e PGID=$PGID \
+ -e TZ=$TZ \
+ -v "${DOWNLOADS_PATH}":/downloads \
+ -v "${CONFIG_PATH}/deluge":/config \
+ linuxserver/deluge
+ExecStart=/usr/bin/docker start -a deluge
+ExecStop=/usr/bin/docker stop deluge
+
+[Install]
+WantedBy=multi-user.target
