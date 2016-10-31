@@ -1,0 +1,20 @@
+[Unit]
+Description=Emby docker container
+Requires=docker.service sonarr-docker.service
+After=docker.service sonarr-docker.service
+
+[Service]
+EnvironmentFile=/etc/systemd/download_settings.env
+ExecStartPre=-/usr/bin/docker create \
+ --name=emby \
+ -e APP_UID=${PUID} -e APP_GID=${PGID} \
+ -e TZ=${TZ} \
+ -p 8096:8096 -p 8920:8920 -p 7359:7359/udp -p 1901:1900/udp \
+ -v "${DOWNLOADS_PATH}":/downloads \
+ -v "${CONFIG_PATH}/emby":/config \
+ emby/embyserver
+ExecStart=/usr/bin/docker start -a emby
+ExecStop=/usr/bin/docker stop emby
+
+[Install]
+WantedBy=multi-user.target

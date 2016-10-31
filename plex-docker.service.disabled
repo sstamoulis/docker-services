@@ -1,0 +1,23 @@
+[Unit]
+Description=Plex Media Server docker container
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/systemd/download_settings.env
+ExecStartPre=-/usr/bin/docker create \
+ --name=plex \
+ --net=host \
+ -e VERSION=latest \
+ -e PUID=${PUID} -e PGID=${PGID} \
+ -e TZ=${TZ} \
+ -v "${DOWNLOADS_PATH}/tv":/data/tv \
+ -v "${DOWNLOADS_PATH}/movies":/data/movies \
+ -v "${CONFIG_PATH}/plex":/config \
+ -v "${CONFIG_PATH}/plex/transcode":/transcode \
+ linuxserver/plex
+ExecStart=/usr/bin/docker start -a plex
+ExecStop=/usr/bin/docker stop plex
+
+[Install]
+WantedBy=multi-user.target

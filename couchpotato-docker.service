@@ -1,22 +1,21 @@
 [Unit]
-Description=Sonarr docker container
+Description=CouchPotato docker container
 Requires=docker.service deluge-docker.service cardigann-docker.service
 After=docker.service deluge-docker.service cardigann-docker.service
 
 [Service]
 EnvironmentFile=/etc/systemd/download_settings.env
 ExecStartPre=-/usr/bin/docker create \
- --name=sonarr \
+ --name=couchpotato \
  -e PUID=${PUID} -e PGID=${PGID} \
  -e TZ=${TZ} \
- -p 8989:8989 \
- -v /dev/rtc:/dev/rtc:ro \
- -v "${DOWNLOADS_PATH}/tv":/tv \
- -v "${CONFIG_PATH}/sonarr":/config \
+ -p 5050:5050 \
  -v "${DOWNLOADS_PATH}":/downloads \
- linuxserver/sonarr
-ExecStart=/usr/bin/docker start -a sonarr
-ExecStop=/usr/bin/docker stop sonarr
+ -v "${DOWNLOADS_PATH}/movies":/movies \
+ -v "${CONFIG_PATH}/couchpotato":/config \
+ linuxserver/couchpotato
+ExecStart=/usr/bin/docker start -a couchpotato
+ExecStop=/usr/bin/docker stop couchpotato
 
 [Install]
 WantedBy=multi-user.target

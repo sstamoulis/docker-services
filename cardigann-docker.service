@@ -7,8 +7,8 @@ After=docker.service
 EnvironmentFile=/etc/systemd/download_settings.env
 ExecStartPre=-/usr/bin/docker create \
  --name=cardigann \
- -e PUID=$PUID -e PGID=$PGID \
- -e TZ=$TZ \
+ -e PUID=${PUID} -e PGID=${PGID} \
+ -e TZ=${TZ} \
  -p 5060:5060 \
  -v "${CONFIG_PATH}/cardigann":/config \
  sstamoulis/cardigann
